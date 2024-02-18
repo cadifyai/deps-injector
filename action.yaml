@@ -1,0 +1,72 @@
+name: Dependency Injector
+description: Injects dependencies to a specific path.
+
+branding:
+  icon: package
+  color: black
+
+inputs:
+  DEPENDENCY_DIRECTORY:
+    description: The path to inject the dependencies.
+    required: true
+  COMMIT:
+    description: Whether to commit the changes to the repository.
+    required: false
+    default: false
+  COMMIT_NAME:
+    description: The name to use for the commit.
+    required: false
+    default: Dependency Injector
+  COMMIT_EMAIL:
+    description: The email to use for the commit.
+    required: false
+    default: 38025909+siliconlad@users.noreply.github.com
+  ACCESS_TOKEN:
+    description: The access token to use to write to the repository.
+    required: false
+  PYTHON_VERSION:
+    description: The Python version to use.
+    required: false
+    default: 3.11
+  BRANCH:
+    description: The branch to commit the changes to.
+    required: false
+    default: main
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ inputs.BRANCH }}
+        token: ${{ inputs.ACCESS_TOKEN }}
+
+    - name: Set up Python ${{ inputs.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.PYTHON_VERSION }}
+
+    - name: Set up venv
+      run: |
+        python -m venv env
+        source env/bin/activate
+        python -m pip install -r requirements.txt
+      shell: bash
+
+    - name: Inject dependencies
+      run: |
+        source env/bin/activate
+        rm -rf ${{ inputs.PATH }}
+        pip list --local --format freeze --exclude pip --exclude setuptools | awk -F "==" '{print $1}' | sed -E 's/-/_/g' | xargs -I $ find ./env/lib/python3.10/site-packages/ -maxdepth 1 -regex ".*/site-packages/\$\(\.py\)*" | xargs -I $ cp -r $ ${{ inputs.PATH }}
+      shell: bash
+
+    - name: Commit changes
+      if: ${{ inputs.COMMIT }}
+      run: |
+        git add ${{ inputs.PATH }}
+        git config --global user.name ${{ inputs.COMMIT_NAME }}
+        git config --global user.email ${{ inputs.COMMIT_EMAIL }}
+        git commit -m "Inject dependencies"  --allow-empty
+        git push origin HEAD:${{ inputs.BRANCH }}
+      shell: bash
