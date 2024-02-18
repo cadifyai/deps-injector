@@ -27,7 +27,8 @@ inputs:
   PYTHON_VERSION:
     description: The Python version to use.
     required: false
-    default: 3.11
+    default: "python3.11"
+    choices: ["python3.11", "python3.10", "python3.9"]
   BRANCH:
     description: The branch to commit the changes to.
     required: false
@@ -57,8 +58,8 @@ runs:
     - name: Inject dependencies
       run: |
         source env/bin/activate
-        rm -rf ${{ inputs.DEPENDENCY_DIRECTORY }}
-        pip list --local --format freeze --exclude pip --exclude setuptools | awk -F "==" '{print $1}' | sed -E 's/-/_/g' | xargs -I $ find ./env/lib/python3.10/site-packages/ -maxdepth 1 -regex ".*/site-packages/\$\(\.py\)*" | xargs -I $ cp -r $ ${{ inputs.DEPENDENCY_DIRECTORY }}
+        rm -rf ${{ inputs.DEPENDENCY_DIRECTORY }} && mkdir -p ${{ inputs.DEPENDENCY_DIRECTORY }}
+        pip list --local --format freeze --exclude pip --exclude setuptools | awk -F "==" '{print $1}' | sed -E 's/-/_/g' | xargs -I $ find ./env/lib/${{ inputs.PYTHON_VERSION }}/site-packages/ -maxdepth 1 -regex ".*/site-packages/\$\(\.py\)*" | xargs -I $ cp -r $ ${{ inputs.DEPENDENCY_DIRECTORY }}
       shell: bash
 
     - name: Commit changes
