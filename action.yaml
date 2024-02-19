@@ -63,7 +63,7 @@ runs:
       shell: bash
 
     - name: Commit changes
-      if: ${{ inputs.COMMIT }}
+      if: ${{ inputs.COMMIT == true }}
       run: |
         git add ${{ inputs.DEPENDENCY_DIRECTORY }}
         git config --global user.name ${{ inputs.COMMIT_NAME }}
