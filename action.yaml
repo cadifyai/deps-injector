@@ -9,9 +9,10 @@ inputs:
   DEPENDENCY_DIRECTORY:
     description: The path to inject the dependencies.
     required: true
-  ACCESS_TOKEN:
-    description: The access token to use to write to the repository.
+  PYTHON_VERSION:
+    description: The Python version to use.
     required: true
+    choices: ["3.11", "3.10", "3.9"]
   COMMIT:
     description: Whether to commit the changes to the repository.
     required: false
@@ -24,11 +25,6 @@ inputs:
     description: The email to use for the commit.
     required: false
     default: 38025909+siliconlad@users.noreply.github.com
-  PYTHON_VERSION:
-    description: The Python version to use.
-    required: false
-    default: "3.11"
-    choices: ["3.11", "3.10", "3.9"]
   BRANCH:
     description: The branch to commit the changes to.
     required: false
@@ -37,17 +33,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ inputs.BRANCH }}
-        token: ${{ inputs.ACCESS_TOKEN }}
-
-    - name: Set up Python ${{ inputs.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ inputs.PYTHON_VERSION }}
-
     - name: Set up venv
       run: |
         python -m venv env
