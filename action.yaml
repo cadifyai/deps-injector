@@ -9,6 +9,9 @@ inputs:
   DEPENDENCY_DIRECTORY:
     description: The path to inject the dependencies.
     required: true
+  ACCESS_TOKEN:
+    description: The access token to use to write to the repository.
+    required: true
   COMMIT:
     description: Whether to commit the changes to the repository.
     required: false
@@ -21,10 +24,6 @@ inputs:
     description: The email to use for the commit.
     required: false
     default: 38025909+siliconlad@users.noreply.github.com
-  ACCESS_TOKEN:
-    description: The access token to use to write to the repository.
-    required: false
-    default: ${{ secrets.GITHUB_TOKEN }}
   PYTHON_VERSION:
     description: The Python version to use.
     required: false
