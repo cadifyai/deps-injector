@@ -24,6 +24,7 @@ inputs:
   ACCESS_TOKEN:
     description: The access token to use to write to the repository.
     required: false
+    default: ${{ secrets.GITHUB_TOKEN }}
   PYTHON_VERSION:
     description: The Python version to use.
     required: false
