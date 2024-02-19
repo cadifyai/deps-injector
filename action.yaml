@@ -75,3 +75,4 @@ runs:
     - name: Cleanup
       run: |
         rm -rf env
+      shell: bash
