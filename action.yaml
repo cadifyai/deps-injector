@@ -71,3 +71,7 @@ runs:
         git commit -m "Inject dependencies"  --allow-empty
         git push origin HEAD:${{ inputs.BRANCH }}
       shell: bash
+
+    - name: Cleanup
+      run: |
+        rm -rf env
